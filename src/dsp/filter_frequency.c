@@ -248,7 +248,7 @@ _aaxNewFrequencyFilterHandle(const aaxConfig config, enum aaxFilterType type, _a
       rv->slot[0]->data = NULL;
 
       /* reconstruct rv->slot[1] */
-      freq = (_aaxRingBufferFreqFilterData*)p2d->filter[rv->pos].data;
+      freq = (_aaxRingBufferFreqFilterData*)p2d->filter[rv->pos]->data;
       if (freq && freq->lfo)
       {
          rv->slot[1]->param[AAX_SWEEP_RATE & 0xF] = freq->lfo->f;
@@ -260,7 +260,7 @@ _aaxNewFrequencyFilterHandle(const aaxConfig config, enum aaxFilterType type, _a
          rv->slot[1]->param[AAX_CUTOFF_FREQUENCY_HF & 0xF] = 22050.0f;
       }
 
-      rv->state = p2d->filter[rv->pos].state;
+      rv->state = p2d->filter[rv->pos]->state;
    }
    return rv;
 }

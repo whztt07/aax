@@ -178,7 +178,7 @@ _aaxSoftwareMixerPostProcess(const void *id, const void *hid, void *d, const voi
       crossover = (_FILTER_GET_DATA(sensor, SURROUND_CROSSOVER_LP) != NULL);
       crossover &= (no_tracks >= lfe_track);
    }
-   else if (subframe && subframe->filter)
+   else if (subframe && subframe->filter[EQUALIZER_HF])
    {
       parametric = (_FILTER_GET_DATA(subframe, EQUALIZER_HF) != NULL);
       parametric &= (_FILTER_GET_DATA(subframe, EQUALIZER_LF) != NULL);

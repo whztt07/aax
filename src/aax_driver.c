@@ -386,6 +386,7 @@ aaxDriverOpen(aaxConfig config)
          {
             const char* name = handle->devname[1];
             char *renderer;
+            int i;
 
             handle->backend.handle = be->connect(handle, nid, xoid, name, mode);
 
@@ -410,6 +411,10 @@ aaxDriverOpen(aaxConfig config)
 
             if (_info == NULL) {
                _info =  handle->info;
+            }
+
+            for (i=0; i<EQUALIZER_MAX; ++i) {
+               handle->filter[i] = calloc(1, sizeof(_aaxFilterInfo));
             }
 
             if (handle->info->mode == AAX_MODE_WRITE_SURROUND)
@@ -950,9 +955,13 @@ _open_handle(aaxConfig config)
             {
                _sensor_t* sensor = ptr1;
                _aaxAudioFrame* smixer;
+               int i;
 
-               sensor->filter = handle->filter;
-               _aaxSetDefaultEqualizer(handle->filter);
+               for (i=0; i<EQUALIZER_MAX; ++i) {
+                  sensor->filter[i] = calloc(1, sizeof(_aaxFilterInfo));
+               }
+               handle->filter = sensor->filter;
+               _aaxSetDefaultEqualizer(sensor->filter);
 
                size = sizeof(_sensor_t);
                smixer = (_aaxAudioFrame*)((char*)sensor + size);
@@ -1356,32 +1365,9 @@ _aaxFreeSensor(void *ssr)
 {
    _sensor_t *sensor = (_sensor_t*)ssr;
    _aaxAudioFrame* smixer = sensor->mixer;
-   int i;
 
-   /* frees both EQUALIZER_LF and EQUALIZER_HF */
-   if (sensor->filter[EQUALIZER_LF].data) {
-      free(sensor->filter[EQUALIZER_LF].data);
-   }
-
-   /* frees both HRTF_HEADSHADOW and SURROUND_CROSSOVER_LP **/
-   if (sensor->filter[HRTF_HEADSHADOW].data) {
-      free(sensor->filter[HRTF_HEADSHADOW].data);
-   }
-
-   for (i=0; i<MAX_STEREO_FILTER; ++i)
-   {
-      _FILTER_LOCK2D_DATA(smixer, i);
-      _FILTER_FREE2D_DATA(smixer, i);
-      _FILTER_UNLOCK2D_DATA(smixer, i);
-   }
-   _FILTER_FREE3D_DATA(smixer, DISTANCE_FILTER);
-
-   for (i=0; i<MAX_STEREO_EFFECT; ++i)
-   {
-      _EFFECT_LOCK2D_DATA(smixer, i);
-      _EFFECT_FREE2D_DATA(smixer, i);
-      _EFFECT_UNLOCK2D_DATA(smixer, i);
-   }
+   _aaxFreeDefault2dFiltersEffects(smixer->props2d);
+   _aaxFreeDefault3dFiltersEffects(smixer->props3d);
 
    _intBufErase(&smixer->p3dq, _AAX_DELAYED3D, _aax_aligned_free);
    _aax_aligned_free(smixer->props3d->dprops3d);

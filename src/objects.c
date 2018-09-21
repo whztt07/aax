@@ -96,17 +96,81 @@ _aaxSetDefault2dFiltersEffects(_aax2dProps *p2d)
    unsigned int pos;
 
    /* Note: skips the volume filter */
-   for (pos=DYNAMIC_GAIN_FILTER; pos<MAX_STEREO_FILTER; pos++)
+   for (pos=DYNAMIC_GAIN_FILTER; pos<MAX_STEREO_FILTER; ++pos)
    {
-      _aaxSetDefaultFilter2d(&p2d->filter[pos], pos, 0);
-      _FILTER_FREE_DATA(p2d, pos);
+      if (!p2d->filter[pos]) {
+         p2d->filter[pos] = calloc(1, sizeof(_aaxFilterInfo));
+      }
+      else
+      {
+         _FILTER_LOCK_DATA(p2d, pos);
+         _FILTER_FREE_DATA(p2d, pos);
+         _FILTER_UNLOCK_DATA(p2d, pos);
+      }
+      _aaxSetDefaultFilter2d(p2d->filter[pos], pos, 0);
    }
 
    /* Note: skips the pitch effect */
-   for (pos=REVERB_EFFECT; pos<MAX_STEREO_EFFECT; pos++)
+   for (pos=REVERB_EFFECT; pos<MAX_STEREO_EFFECT; ++pos)
    {
-      _aaxSetDefaultEffect2d(&p2d->effect[pos], pos, 0);
+      if (!p2d->effect[pos]) {
+         p2d->effect[pos] = calloc(1, sizeof(_aaxEffectInfo));
+      }
+      else
+      {
+         _EFFECT_LOCK_DATA(p2d, pos);
+         _EFFECT_FREE_DATA(p2d, pos);
+         _EFFECT_UNLOCK_DATA(p2d, pos);
+      }
+      _aaxSetDefaultEffect2d(p2d->effect[pos], pos, 0);
+   }
+}
+
+void
+_aaxFreeDefault2dFiltersEffects(_aax2dProps *p2d)
+{
+   unsigned int pos;
+
+   for (pos=0; pos<MAX_STEREO_FILTER; ++pos)
+   {
+      assert(p2d->filter[pos]);
+      _FILTER_LOCK_DATA(p2d, pos);
+      _FILTER_FREE_DATA(p2d, pos);
+      _FILTER_UNLOCK_DATA(p2d, pos);
+      free(p2d->filter[pos]);
+   }
+
+   for (pos=0; pos<MAX_STEREO_EFFECT; ++pos)
+   {
+      assert(p2d->effect[pos]);
+      _EFFECT_LOCK_DATA(p2d, pos);
       _EFFECT_FREE_DATA(p2d, pos);
+      _EFFECT_UNLOCK_DATA(p2d, pos);
+      free(p2d->effect[pos]);
+   }
+}
+
+void
+_aaxFreeDefault3dFiltersEffects(_aax3dProps *p3d)
+{  
+   unsigned int pos;
+
+   for (pos=0; pos<MAX_3D_FILTER; ++pos)
+   {
+      assert(p3d->filter[pos]);
+      _FILTER_LOCK_DATA(p3d, pos);
+      _FILTER_FREE_DATA(p3d, pos);
+      _FILTER_UNLOCK_DATA(p3d, pos);
+      free(p3d->filter[pos]);
+   }
+
+   for (pos=0; pos<MAX_3D_EFFECT; ++pos)
+   {
+      assert(p3d->effect[pos]);
+      _EFFECT_LOCK_DATA(p3d, pos);
+      _EFFECT_FREE_DATA(p3d, pos);
+      _EFFECT_UNLOCK_DATA(p3d, pos);
+      free(p3d->effect[pos]);
    }
 }
 
@@ -117,8 +181,12 @@ _aaxSetDefault2dProps(_aax2dProps *p2d)
 
    assert (p2d);
 
-   _aaxSetDefaultFilter2d(&p2d->filter[0], 0, 0); // volume
-   _aaxSetDefaultEffect2d(&p2d->effect[0], 0, 0); // pitch
+   if (!p2d->filter[0]) p2d->filter[0] = calloc(1, sizeof(_aaxFilterInfo));
+   _aaxSetDefaultFilter2d(p2d->filter[0], 0, 0); // volume
+
+   if (!p2d->effect[0]) p2d->effect[0] = calloc(1, sizeof(_aaxEffectInfo));
+   _aaxSetDefaultEffect2d(p2d->effect[0], 0, 0); // pitch
+
    _aaxSetDefault2dFiltersEffects(p2d);
 
    /* normalized  directions */
@@ -208,11 +276,15 @@ _aax3dPropsCreate()
          _aaxSetDefaultDelayed3dProps(rv->dprops3d);
          _aaxSetDefaultDelayed3dProps(rv->m_dprops3d);
 
-         for (pos=0; pos<MAX_3D_FILTER; pos++) {
-            _aaxSetDefaultFilter3d(&rv->filter[pos], pos, 0);
+         for (pos=0; pos<MAX_3D_FILTER; pos++)
+         {
+            rv->filter[pos] = calloc(1, sizeof(_aaxFilterInfo));
+            _aaxSetDefaultFilter3d(rv->filter[pos], pos, 0);
          }
-         for (pos=0; pos<MAX_3D_EFFECT; pos++) {
-            _aaxSetDefaultEffect3d(&rv->effect[pos], pos, 0);
+         for (pos=0; pos<MAX_3D_EFFECT; pos++)
+         {
+            rv->effect[pos] = calloc(1, sizeof(_aaxEffectInfo));
+            _aaxSetDefaultEffect3d(rv->effect[pos], pos, 0);
          }
       }
       else

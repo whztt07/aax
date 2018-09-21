@@ -83,7 +83,7 @@ _aaxNewPitchEffectHandle(const aaxConfig config, enum aaxEffectType type, _aax2d
       memcpy(rv->slot[0], &p2d->effect[rv->pos], size);
       rv->slot[0]->data = NULL;
 
-      rv->state = p2d->effect[rv->pos].state;
+      rv->state = p2d->effect[rv->pos]->state;
    }
    return rv;
 }

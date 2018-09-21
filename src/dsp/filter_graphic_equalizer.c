@@ -185,7 +185,7 @@ _aaxNewGraphicEqualizerHandle(const aaxConfig config, enum aaxFilterType type, _
       rv->slot[0]->data = NULL;     rv->slot[1]->data = NULL;
       rv->slot[EQUALIZER_HF]->destroy = destroy;
 
-      rv->state = p2d->filter[rv->pos].state;
+      rv->state = p2d->filter[rv->pos]->state;
    }
    return rv;
 }

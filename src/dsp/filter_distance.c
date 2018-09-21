@@ -151,7 +151,7 @@ _aaxNewDistanceFilterHandle(const aaxConfig config, enum aaxFilterType type, UNU
          data->prev.unit_m = rv->info->unit_m;
          data->next.unit_m = rv->info->unit_m;
       }
-      rv->state = p3d->filter[rv->pos].state;
+      rv->state = p3d->filter[rv->pos]->state;
    }
    return rv;
 }

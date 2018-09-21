@@ -82,7 +82,7 @@ _aaxNewDirectionalFilterHandle(const aaxConfig config, enum aaxFilterType type, 
       memcpy(rv->slot[0], &p3d->filter[rv->pos], size);
       rv->slot[0]->data = NULL;
 
-      rv->state = p3d->filter[rv->pos].state;
+      rv->state = p3d->filter[rv->pos]->state;
    }
    return rv;
 }

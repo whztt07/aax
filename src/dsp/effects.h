@@ -120,21 +120,21 @@ extern _eff_function_tbl *_aaxEffects[AAX_EFFECT_MAX];
 #define _EFFECT_SET_SLOT_DATA(E, s, v)  E->slot[s]->data = v
 #define _EFFECT_SET_SLOT_UPDATED(E)     if (!E->slot[0]->updated) E->slot[0]->updated = 1
 
-#define _EFFECT_GET(P, e, p)            P->effect[e].param[p]
-#define _EFFECT_GET_STATE(P, e)         P->effect[e].state
-#define _EFFECT_GET_UPDATED(P, e)	P->effect[e].updated
-#define _EFFECT_LOCK_DATA(P, e)		_aaxMutexLock(P->effect[e].mutex)
-#define _EFFECT_UNLOCK_DATA(P, e)	_aaxMutexUnLock(P->effect[e].mutex)
-#define _EFFECT_FREE_LOCK(P, e)		_aaxMutexDestroy(P->effect[e].mutex)
-#define _EFFECT_GET_DATA(P, e)          P->effect[e].data
-#define _EFFECT_FREE_DATA(P, e)         if (P->effect[e].destroy) P->effect[e].destroy(P->effect[e].data)
-#define _EFFECT_SET(P, e, p, v)         P->effect[e].param[p] = v
-#define _EFFECT_SET_STATE(P, e, v)      P->effect[e].state = v
-#define _EFFECT_SET_UPDATED(P, e, v)    P->effect[e].updated = v
-#define _EFFECT_SET_DATA(P, e, v)       P->effect[e].data = v
+#define _EFFECT_GET(P, e, p)            P->effect[e]->param[p]
+#define _EFFECT_GET_STATE(P, e)         P->effect[e]->state
+#define _EFFECT_GET_UPDATED(P, e)	P->effect[e]->updated
+#define _EFFECT_LOCK_DATA(P, e)		_aaxMutexLock(P->effect[e]->mutex)
+#define _EFFECT_UNLOCK_DATA(P, e)	_aaxMutexUnLock(P->effect[e]->mutex)
+#define _EFFECT_FREE_LOCK(P, e)		_aaxMutexDestroy(P->effect[e]->mutex)
+#define _EFFECT_GET_DATA(P, e)          P->effect[e]->data
+#define _EFFECT_FREE_DATA(P, e)         if (P->effect[e]->destroy) P->effect[e]->destroy(P->effect[e]->data)
+#define _EFFECT_SET(P, e, p, v)         P->effect[e]->param[p] = v
+#define _EFFECT_SET_STATE(P, e, v)      P->effect[e]->state = v
+#define _EFFECT_SET_UPDATED(P, e, v)    P->effect[e]->updated = v
+#define _EFFECT_SET_DATA(P, e, v)       P->effect[e]->data = v
 #define _EFFECT_COPY(P1, P2, e, p)      \
-                                P1->effect[e].param[p] = P2->effect[e].param[p]
-#define _EFFECT_COPY_DATA(P1, P2, e)    P1->effect[e].data = P2->effect[e].data
+                                P1->effect[e]->param[p] = P2->effect[e]->param[p]
+#define _EFFECT_COPY_DATA(P1, P2, e)    P1->effect[e]->data = P2->effect[e]->data
 
 #define _EFFECT_GET2D(G, e, p)          _EFFECT_GET(G->props2d, e, p)
 #define _EFFECT_LOCK2D_DATA(G, e)	_EFFECT_LOCK_DATA(G->props2d, e)
@@ -143,6 +143,9 @@ extern _eff_function_tbl *_aaxEffects[AAX_EFFECT_MAX];
 #define _EFFECT_GET2D_DATA(G, e)        _EFFECT_GET_DATA(G->props2d, e)
 #define _EFFECT_FREE2D_DATA(G, e)	_EFFECT_FREE_DATA(G->props2d, e)
 #define _EFFECT_GET3D(G, e, p)          _EFFECT_GET(G->props3d, e, p)
+#define _EFFECT_LOCK3D_DATA(G, e)       _EFFECT_LOCK_DATA(G->props3d, e)
+#define _EFFECT_UNLOCK3D_DATA(G, e)     _EFFECT_UNLOCK_DATA(G->props3d, e)
+#define _EFFECT_FREE3D_LOCK(G, e)       _EFFECT_FREE_LOCK(G->props3d, e)
 #define _EFFECT_GET3D_DATA(G, e)        _EFFECT_GET_DATA(G->props3d, e)
 #define _EFFECT_FREE3D_DATA(G, e)	_EFFECT_FREE_DATA(G->props3d, e)
 #define _EFFECT_SET2D(G, e, p, v)       _EFFECT_SET(G->props2d, e, p, v)
@@ -160,12 +163,12 @@ extern _eff_function_tbl *_aaxEffects[AAX_EFFECT_MAX];
 #define _EFFECT_COPYD3D_DATA(G1, G2, e) _EFFECT_COPY_DATA(G1->props3d, G2->props3d, e)
 
 #define _EFFECT_SWAP_MUTEX(P, e, E, s)                                         \
- E->slot[s]->mutex=_aaxAtomicPointerSwap(&P->effect[e].mutex,E->slot[s]->mutex);
+ E->slot[s]->mutex=_aaxAtomicPointerSwap(&P->effect[e]->mutex,E->slot[s]->mutex);
 
 #define _EFFECT_SWAP_SLOT_DATA(P, e, E, s) do {                                \
- E->slot[s]->data=_aaxAtomicPointerSwap(&P->effect[e].data,E->slot[s]->data);  \
- P->effect[e].destroy = E->slot[s]->destroy;                                   \
- if (!s) aaxEffectSetState(E, P->effect[e].state); } while (0);
+ E->slot[s]->data=_aaxAtomicPointerSwap(&P->effect[e]->data,E->slot[s]->data);  \
+ P->effect[e]->destroy = E->slot[s]->destroy;                                   \
+ if (!s) aaxEffectSetState(E, P->effect[e]->state); } while (0);
 
 #define _EFFECT_SWAP_SLOT(P, t, f, s)                                          \
  _EFFECT_SET(P, t, 0, _EFFECT_GET_SLOT(f, s, 0));                              \

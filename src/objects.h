@@ -304,8 +304,8 @@ typedef struct _aax3dProps_s
    _aaxDelayed3dProps* m_dprops3d;      /* modiefied */
 
    /* 3d filters and effects */
-   _aaxFilterInfo filter[MAX_3D_FILTER];
-   _aaxEffectInfo effect[MAX_3D_EFFECT];
+   _aaxFilterInfo *filter[MAX_3D_FILTER];
+   _aaxEffectInfo *effect[MAX_3D_EFFECT];
 
 } _aax3dProps;
 
@@ -328,8 +328,8 @@ typedef ALIGN16 struct
    float k;
 
    /* stereo filters */
-   _aaxFilterInfo filter[MAX_STEREO_FILTER];
-   _aaxEffectInfo effect[MAX_STEREO_EFFECT];
+   _aaxFilterInfo *filter[MAX_STEREO_FILTER];
+   _aaxEffectInfo *effect[MAX_STEREO_EFFECT];
 
    /* smooth transition between volume and pitch values */
    float prev_gain[_AAX_MAX_SPEAKERS];
@@ -425,6 +425,8 @@ void _aaxSetDefaultInfo(_aaxMixerInfo*, void*);
 
 void _aaxSetDefault2dProps(_aax2dProps*);
 void _aaxSetDefault2dFiltersEffects(_aax2dProps*);
+void _aaxFreeDefault2dFiltersEffects(_aax2dProps *p2d);
+void _aaxFreeDefault3dFiltersEffects(_aax3dProps *p3d);
 
 _aax3dProps* _aax3dPropsCreate();
 _aaxDelayed3dProps* _aaxDelayed3dPropsDup(_aaxDelayed3dProps*);

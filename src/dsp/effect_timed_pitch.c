@@ -176,17 +176,17 @@ _aaxNewTimedPitchEffectHandle(const aaxConfig config, enum aaxEffectType type, _
       rv->slot[0]->destroy = destroy;
       rv->slot[0]->data = NULL;
 
-      rv->state = p2d->effect[rv->pos].state;
+      rv->state = p2d->effect[rv->pos]->state;
 
       i = 0;
-      env = (_aaxEnvelopeData*)p2d->effect[rv->pos].data;
+      env = (_aaxEnvelopeData*)p2d->effect[rv->pos]->data;
       if (env)
       {
          if (env->max_pos[1] > env->max_pos[0]) i = 1;
-         dt = p2d->effect[rv->pos].param[2*i+1] / env->max_pos[i];
+         dt = p2d->effect[rv->pos]->param[2*i+1] / env->max_pos[i];
 
          no_steps = env->max_pos[1];
-         value = p2d->effect[rv->pos].param[AAX_LEVEL1];
+         value = p2d->effect[rv->pos]->param[AAX_LEVEL1];
          value += env->step[1] * no_steps;
 
          stages = _MIN(1+env->max_stages/2, _MAX_ENVELOPE_STAGES/2);

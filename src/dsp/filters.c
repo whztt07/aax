@@ -110,41 +110,36 @@ get_filter(aaxFilter f)
 }
 
 void
-_aaxSetDefaultEqualizer(_aaxFilterInfo filter[EQUALIZER_MAX])
+_aaxSetDefaultEqualizer(_aaxFilterInfo *filter[EQUALIZER_MAX])
 {
    int i;
  
    /* parametric equalizer */
    for (i=0; i<2; i++)
    {
-      filter[i].param[AAX_CUTOFF_FREQUENCY] = 22050.0f;
-      filter[i].param[AAX_LF_GAIN] = 1.0f;
-      filter[i].param[AAX_HF_GAIN] = 1.0f;
-      filter[i].param[AAX_RESONANCE] = 1.0f;
-      filter[i].state = AAX_FALSE;
+      filter[i]->param[AAX_CUTOFF_FREQUENCY] = 22050.0f;
+      filter[i]->param[AAX_LF_GAIN] = 1.0f;
+      filter[i]->param[AAX_HF_GAIN] = 1.0f;
+      filter[i]->param[AAX_RESONANCE] = 1.0f;
+      filter[i]->state = AAX_FALSE;
    }
 
    /* Surround Crossover filter */
-   filter[SURROUND_CROSSOVER_LP].param[AAX_CUTOFF_FREQUENCY] = 80.0f;
-   filter[SURROUND_CROSSOVER_LP].param[AAX_LF_GAIN] = 1.0f;
-   filter[SURROUND_CROSSOVER_LP].param[AAX_HF_GAIN] = 0.0f;
-   filter[SURROUND_CROSSOVER_LP].param[AAX_RESONANCE] = 1.0f;
-   filter[SURROUND_CROSSOVER_LP].state = AAX_FALSE;
+   filter[SURROUND_CROSSOVER_LP]->param[AAX_CUTOFF_FREQUENCY] = 80.0f;
+   filter[SURROUND_CROSSOVER_LP]->param[AAX_LF_GAIN] = 1.0f;
+   filter[SURROUND_CROSSOVER_LP]->param[AAX_HF_GAIN] = 0.0f;
+   filter[SURROUND_CROSSOVER_LP]->param[AAX_RESONANCE] = 1.0f;
+   filter[SURROUND_CROSSOVER_LP]->state = AAX_FALSE;
 }
 
 void
 _aaxSetDefaultFilter2d(_aaxFilterInfo *filter, unsigned int type, UNUSED(unsigned slot))
 {
-    void *mutex = filter->mutex;
-
    assert(type < MAX_STEREO_FILTER);
    assert(slot < _MAX_FE_SLOTS);
 
    memset(filter, 0, sizeof(_aaxFilterInfo));
-   if (!mutex) {
-       mutex = _aaxMutexCreate(mutex);
-   }
-   filter->mutex = mutex;
+   filter->mutex = _aaxMutexCreate(NULL);
 
    switch(type)
    {
@@ -172,6 +167,8 @@ _aaxSetDefaultFilter3d(_aaxFilterInfo *filter, unsigned int type, UNUSED(unsigne
    assert(type < MAX_3D_FILTER);
 
    memset(filter, 0, sizeof(_aaxFilterInfo));
+   filter->mutex = _aaxMutexCreate(NULL);
+
    switch(type)
    {
    case DISTANCE_FILTER:

@@ -229,7 +229,7 @@ _aaxNewCompressorHandle(const aaxConfig config, enum aaxFilterType type, _aax2dP
       rv->slot[1]->param[AAX_GATE_PERIOD & 0xF] = 0.25f;
       rv->slot[1]->param[AAX_GATE_THRESHOLD & 0xF] = 0.0f;
 
-      rv->state = p2d->filter[rv->pos].state;
+      rv->state = p2d->filter[rv->pos]->state;
    }
    return rv;
 }

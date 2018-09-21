@@ -157,19 +157,18 @@ aaxAudioFrameDestroy(aaxFrame frame)
 
       _aaxAudioFrame* fmixer = handle->submix;
 
-      for (i=0; i<MAX_STEREO_FILTER; ++i)
-      {
-         _FILTER_LOCK2D_DATA(fmixer, i);
-         _FILTER_FREE2D_DATA(fmixer, i);
-         _FILTER_UNLOCK2D_DATA(fmixer, i);
-      }
-      _FILTER_FREE3D_DATA(fmixer, DISTANCE_FILTER);
+      _aaxFreeDefault2dFiltersEffects(fmixer->props2d);
+      _aaxFreeDefault3dFiltersEffects(fmixer->props3d);
 
-      for (i=0; i<MAX_STEREO_EFFECT; ++i)
+      for (i=0; i<HRTF_HEADSHADOW; ++i)
       {
-         _EFFECT_LOCK2D_DATA(fmixer, i);
-         _EFFECT_FREE2D_DATA(fmixer, i);
-         _EFFECT_UNLOCK2D_DATA(fmixer, i);
+         if (handle->filter[i])
+         {
+            _FILTER_LOCK_DATA(handle, i);
+            _FILTER_FREE_DATA(handle, i);
+            _FILTER_UNLOCK_DATA(handle, i);
+            free(handle->filter[i]);
+         }
       }
 
       _intBufErase(&fmixer->p3dq, _AAX_DELAYED3D, _aax_aligned_free);
@@ -186,11 +185,6 @@ aaxAudioFrameDestroy(aaxFrame frame)
                    _aaxRingBufferFree);
       _intBufErase(&fmixer->frame_ringbuffers, _AAX_RINGBUFFER,
                    _aaxRingBufferFree);
-
-      /* frees both EQUALIZER_LF and EQUALIZER_HF */
-      if (handle->filter) {
-         free(handle->filter[EQUALIZER_LF].data);
-      }
 
       /* safeguard against using already destroyed handles */
       handle->id = FADEDBAD;
@@ -483,15 +477,15 @@ aaxAudioFrameSetFilter(aaxFrame frame, aaxFilter f)
       {
 //    case AAX_GRAPHIC_EQUALIZER:
       case AAX_EQUALIZER:
-         if (!handle->filter) {		/* EQUALIZER_LF & EQUALIZER_HF */
-            handle->filter = calloc(2, sizeof(_aaxFilterInfo));
+         if (!handle->filter[EQUALIZER_LF])
+         {
+            handle->filter[EQUALIZER_LF] = calloc(1, sizeof(_aaxFilterInfo));
+            handle->filter[EQUALIZER_HF] = calloc(1, sizeof(_aaxFilterInfo));
          }
-
-         if (handle->filter)
+         if (!handle->filter[EQUALIZER_LF] && handle->filter[EQUALIZER_HF])
          {
             _FILTER_SWAP_SLOT(handle, EQUALIZER_HF, filter, 1);
             _FILTER_SWAP_SLOT(handle, EQUALIZER_LF, filter, 0);
-            break;
          }
          else {
             _aaxErrorSet(AAX_INSUFFICIENT_RESOURCES);

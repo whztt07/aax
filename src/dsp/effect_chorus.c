@@ -192,7 +192,7 @@ _aaxNewChorusEffectHandle(const aaxConfig config, enum aaxEffectType type, _aax2
       rv->slot[0]->destroy = _chorus_destroy;
       rv->slot[0]->data = NULL;
 
-      rv->state = p2d->effect[rv->pos].state;
+      rv->state = p2d->effect[rv->pos]->state;
    }
    return rv;
 }

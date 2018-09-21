@@ -202,8 +202,8 @@ _aaxRingBufferEffectsApply2nd(_aaxRingBufferSample *rbd,
    }
 
    /* modulator effect */
-// state = _EFFECT_GET_STATE(p2d, RINGMODULATE_EFFECT);
-// if (state)
+   state = _EFFECT_GET_STATE(p2d, RINGMODULATE_EFFECT);
+   if (state)
    {
       _aaxRingBufferModulatorData *modulator;
 
@@ -270,7 +270,7 @@ _aaxRingBufferEffectsApply2nd(_aaxRingBufferSample *rbd,
       _aaxFilterInfo *dist_effect;
 
       _EFFECT_LOCK_DATA(p2d, DISTORTION_EFFECT);
-      dist_effect = &p2d->effect[DISTORTION_EFFECT];
+      dist_effect = p2d->effect[DISTORTION_EFFECT];
       distort = dist_effect->data;
       if (distort) {
          distort->run(rbd, pdst, psrc, 0, end, ds, track, dist_effect, env);

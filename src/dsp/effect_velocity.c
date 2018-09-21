@@ -84,7 +84,7 @@ _aaxNewVelocityEffectHandle(const aaxConfig config, enum aaxEffectType type, UNU
       memcpy(rv->slot[0], &p3d->effect[rv->pos], size);
       rv->slot[0]->data = *(void**)&_aaxDopplerFn[0];
 
-      rv->state = p3d->effect[rv->pos].state;
+      rv->state = p3d->effect[rv->pos]->state;
       if (_EFFECT_GET_UPDATED(p3d, rv->pos)) {
          _EFFECT_SET_SLOT_UPDATED(rv);
       }

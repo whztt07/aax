@@ -186,7 +186,7 @@ _aaxNewFlangingEffectHandle(const aaxConfig config, enum aaxEffectType type, _aa
       rv->slot[0]->destroy = _flanging_destroy;
       rv->slot[0]->data = NULL;
 
-      rv->state = p2d->effect[rv->pos].state;
+      rv->state = p2d->effect[rv->pos]->state;
    }
    return rv;
 }

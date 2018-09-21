@@ -112,16 +112,11 @@ get_effect(const aaxEffect e)
 void
 _aaxSetDefaultEffect2d(_aaxEffectInfo *effect, unsigned int type, unsigned slot)
 {
-   void *mutex = effect->mutex;
-
    assert(type < MAX_STEREO_EFFECT);
    assert(slot < _MAX_FE_SLOTS);
 
    memset(effect, 0, sizeof(_aaxEffectInfo));
-   if (!mutex) {
-       mutex = _aaxMutexCreate(mutex);
-   }
-   effect->mutex = mutex;
+   effect->mutex = _aaxMutexCreate(NULL);
 
    switch(type)
    {
@@ -166,6 +161,8 @@ _aaxSetDefaultEffect3d(_aaxEffectInfo *effect, unsigned int type, UNUSED(unsigne
    assert(type < MAX_3D_EFFECT);
 
    memset(effect, 0, sizeof(_aaxEffectInfo));
+   effect->mutex = _aaxMutexCreate(NULL);
+
    switch(type)
    {
    case REVERB_OCCLUSION_EFFECT:

@@ -275,7 +275,7 @@ _aaxNewEqualizerHandle(const aaxConfig config, enum aaxFilterType type, _aax2dPr
       rv->slot[0]->destroy = destroy;
       rv->slot[0]->data = NULL;
 
-      rv->state = p2d->filter[rv->pos].state;
+      rv->state = p2d->filter[rv->pos]->state;
    }
    return rv;
 }

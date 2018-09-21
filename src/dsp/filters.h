@@ -43,7 +43,7 @@ aaxFilter _aaxFilterCreateHandle(_aaxMixerInfo*, enum aaxFilterType, unsigned);
 
 void _aaxSetDefaultFilter2d(_aaxFilterInfo*, unsigned int, unsigned slot);
 void _aaxSetDefaultFilter3d(_aaxFilterInfo*, unsigned int, unsigned slot);
-void _aaxSetDefaultEqualizer(_aaxFilterInfo filter[EQUALIZER_MAX]);
+void _aaxSetDefaultEqualizer(_aaxFilterInfo *filter[EQUALIZER_MAX]);
 
 typedef struct
 {
@@ -115,26 +115,26 @@ extern _flt_function_tbl *_aaxFilters[AAX_FILTER_MAX];
 #define _FILTER_GET_SLOT(F, s, p)       F->slot[s]->param[p]
 #define _FILTER_GET_SLOT_STATE(F)       F->slot[0]->state
 #define _FILTER_GET_SLOT_UPDATED(E)     F->slot[0]->updated
-#define _FILTER_LOCK_DATA(P, f)         _aaxMutexLock(P->filter[f].mutex)
-#define _FILTER_UNLOCK_DATA(P, f)       _aaxMutexUnLock(P->filter[f].mutex)
-#define _FILTER_FREE_LOCK(P, f)         _aaxMutexDestroy(P->filter[f].mutex)
+#define _FILTER_LOCK_DATA(P, f)         _aaxMutexLock(P->filter[f]->mutex)
+#define _FILTER_UNLOCK_DATA(P, f)       _aaxMutexUnLock(P->filter[f]->mutex)
+#define _FILTER_FREE_LOCK(P, f)         _aaxMutexDestroy(P->filter[f]->mutex)
 #define _FILTER_GET_SLOT_DATA(F, s)     F->slot[s]->data
 #define _FILTER_SET_SLOT(F, s, p, v)    F->slot[s]->param[p] = v
 #define _FILTER_SET_SLOT_DATA(F, s, v)  F->slot[s]->data = v
 #define _FILTER_SET_SLOT_UPDATED(E)     if (!F->slot[0]->updated) F->slot[0]->updated = 1
 
-#define _FILTER_GET(P, f, p)            P->filter[f].param[p]
-#define _FILTER_GET_STATE(P, f)         P->filter[f].state
-#define _FILTER_GET_UPDATED(P, f)       P->filter[f].updated
-#define _FILTER_GET_DATA(P, f)          P->filter[f].data
-#define _FILTER_FREE_DATA(P, f)		if (P->filter[f].destroy) P->filter[f].destroy(P->filter[f].data)
-#define _FILTER_SET(P, f, p, v)         P->filter[f].param[p] = v
-#define _FILTER_SET_STATE(P, f, v)      P->filter[f].state = v
-#define _FILTER_SET_UPDATED(P, f, v)    P->filter[f].updated = v
-#define _FILTER_SET_DATA(P, f, v)       P->filter[f].data = v
-#define _FILTER_COPY(P1, P2, f, p)      P1->filter[f].param[p] = P2->filter[f].param[p]
-#define _FILTER_COPY_DATA(P1, P2, f)    P1->filter[f].data = P2->filter[f].data
-#define _FILTER_COPY_STATE(P1, P2, f)   P1->filter[f].state = P2->filter[f].state
+#define _FILTER_GET(P, f, p)            P->filter[f]->param[p]
+#define _FILTER_GET_STATE(P, f)         P->filter[f]->state
+#define _FILTER_GET_UPDATED(P, f)       P->filter[f]->updated
+#define _FILTER_GET_DATA(P, f)          P->filter[f]->data
+#define _FILTER_FREE_DATA(P, f)		if (P->filter[f]->destroy) P->filter[f]->destroy(P->filter[f]->data)
+#define _FILTER_SET(P, f, p, v)         P->filter[f]->param[p] = v
+#define _FILTER_SET_STATE(P, f, v)      P->filter[f]->state = v
+#define _FILTER_SET_UPDATED(P, f, v)    P->filter[f]->updated = v
+#define _FILTER_SET_DATA(P, f, v)       P->filter[f]->data = v
+#define _FILTER_COPY(P1, P2, f, p)      P1->filter[f]->param[p] = P2->filter[f]->param[p]
+#define _FILTER_COPY_DATA(P1, P2, f)    P1->filter[f]->data = P2->filter[f]->data
+#define _FILTER_COPY_STATE(P1, P2, f)   P1->filter[f]->state = P2->filter[f]->state
 
 #define _FILTER_GET2D(G, f, p)          _FILTER_GET(G->props2d, f, p)
 #define _FILTER_LOCK2D_DATA(G, f)       _FILTER_LOCK_DATA(G->props2d, f)
@@ -143,6 +143,9 @@ extern _flt_function_tbl *_aaxFilters[AAX_FILTER_MAX];
 #define _FILTER_GET2D_DATA(G, f)        _FILTER_GET_DATA(G->props2d, f)
 #define _FILTER_FREE2D_DATA(G, f)	_FILTER_FREE_DATA(G->props2d, f)
 #define _FILTER_GET3D(G, f, p)          _FILTER_GET(G->dprops3d, f, p)
+#define _FILTER_LOCK3D_DATA(G, f)       _FILTER_LOCK_DATA(G->props3d, f)
+#define _FILTER_UNLOCK3D_DATA(G, f)     _FILTER_UNLOCK_DATA(G->props3d, f)
+#define _FILTER_FREE3D_LOCK(G, f)       _FILTER_FREE_LOCK(G->props3d, f)
 #define _FILTER_GET3D_DATA(G, f)        _FILTER_GET_DATA(G->dprops3d, f)
 #define _FILTER_FREE3D_DATA(G, f)	_FILTER_FREE_DATA(G->props3d, f)
 #define _FILTER_SET2D(G, f, p, v)       _FILTER_SET(G->props2d, f, p, v)
@@ -157,12 +160,12 @@ extern _flt_function_tbl *_aaxFilters[AAX_FILTER_MAX];
 #define _FILTER_COPYD3D_DATA(G1, G2, f) _FILTER_COPY_DATA(G1->props3d, G2->props3d, f)
 
 #define _FILTER_SWAP_MUTEX(P, f, F, s)                                         \
- F->slot[s]->mutex=_aaxAtomicPointerSwap(&P->filter[f].mutex,F->slot[s]->mutex);
+ F->slot[s]->mutex=_aaxAtomicPointerSwap(&P->filter[f]->mutex,F->slot[s]->mutex);
 
 #define _FILTER_SWAP_SLOT_DATA(P, f, F, s) do {                                \
- F->slot[s]->data=_aaxAtomicPointerSwap(&P->filter[f].data,F->slot[s]->data);  \
- P->filter[f].destroy = F->slot[s]->destroy;                                   \
- if (!s) aaxFilterSetState(F, P->filter[f].state); } while (0);
+ F->slot[s]->data=_aaxAtomicPointerSwap(&P->filter[f]->data,F->slot[s]->data);  \
+ P->filter[f]->destroy = F->slot[s]->destroy;                                   \
+ if (!s) aaxFilterSetState(F, P->filter[f]->state); } while (0);
 
 #define _FILTER_SWAP_SLOT(P, t, f, s)                                          \
  _FILTER_SET(P, t, 0, _FILTER_GET_SLOT(f, s, 0));                              \

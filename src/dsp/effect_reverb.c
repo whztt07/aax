@@ -188,7 +188,7 @@ _aaxNewReverbEffectHandle(const aaxConfig config, enum aaxEffectType type, UNUSE
       rv->slot[0]->destroy = _reverb_destroy;
       rv->slot[0]->data = NULL;
 
-      rv->state = p3d->effect[rv->pos].state;
+      rv->state = p3d->effect[rv->pos]->state;
    }
    return rv;
 }

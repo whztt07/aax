@@ -155,7 +155,7 @@ _aaxNewDynamicPitchEffectHandle(const aaxConfig config, enum aaxEffectType type,
       rv->slot[0]->destroy = destroy;
       rv->slot[0]->data = NULL;
 
-      rv->state = p2d->effect[rv->pos].state;
+      rv->state = p2d->effect[rv->pos]->state;
    }
    return rv;
 }

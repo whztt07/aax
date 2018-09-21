@@ -107,7 +107,7 @@ _aaxNewVolumeFilterHandle(const aaxConfig config, enum aaxFilterType type, UNUSE
       rv->slot[0]->destroy = aligned_destroy;
       rv->slot[0]->data = NULL;
 
-      rv->state = p3d->filter[rv->pos].state;
+      rv->state = p3d->filter[rv->pos]->state;
    }
    return rv;
 }
