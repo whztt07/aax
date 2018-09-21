@@ -99,7 +99,7 @@ _aaxSetDefault2dFiltersEffects(_aax2dProps *p2d)
    for (pos=DYNAMIC_GAIN_FILTER; pos<MAX_STEREO_FILTER; ++pos)
    {
       if (!p2d->filter[pos]) {
-         p2d->filter[pos] = calloc(1, sizeof(_aaxFilterInfo));
+         p2d->filter[pos] = calloc(2, sizeof(_aaxFilterInfo));
       }
       else
       {
@@ -114,7 +114,7 @@ _aaxSetDefault2dFiltersEffects(_aax2dProps *p2d)
    for (pos=REVERB_EFFECT; pos<MAX_STEREO_EFFECT; ++pos)
    {
       if (!p2d->effect[pos]) {
-         p2d->effect[pos] = calloc(1, sizeof(_aaxEffectInfo));
+         p2d->effect[pos] = calloc(2, sizeof(_aaxEffectInfo));
       }
       else
       {

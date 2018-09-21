@@ -1107,7 +1107,7 @@ _aaxReadConfig(_handle_t *handle, const char *devname, int mode)
             handle->backend.ptr = be;
          }
 
-         if (handle->backend.driver) free(handle->backend.driver);
+         FREE(handle->backend.driver);
          handle->backend.driver = _aax_strdup(config->backend.driver);
 
          if (config->node[0].no_emitters)

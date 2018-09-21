@@ -61,7 +61,7 @@ _aax_analyze_waveforms(void **data, unsigned int samples, float fs)
    {
       if (output) _aax_aligned_free(output);
       if (tmp) _aax_aligned_free(tmp);
-      if (rv) free(rv);
+      FREE(rv);
       return NULL;
    }
 

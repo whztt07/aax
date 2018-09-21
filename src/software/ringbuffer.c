@@ -195,10 +195,10 @@ _aaxRingBufferDestroy(_aaxRingBuffer *rb)
    {
       if (--rbd->ref_counter == 0)
       {
-         if (rbd->track) free(rbd->track);
+         FREE(rbd->track);
          rbd->track = NULL;
 
-         if (rbd->scratch) free(rbd->scratch);
+         FREE(rbd->scratch);
          rbd->scratch = NULL;
 
          free(rbi->sample);
@@ -268,7 +268,7 @@ _aaxRingBufferInitTracks(_aaxRingBufferData *rbi)
          rbd->loop_start_sec = 0.0f;
          rbd->loop_end_sec = rbd->duration_sec;
 
-         if (rbd->track) free(rbd->track);
+         FREE(rbd->track);
          rbd->track = (void **)ptr;
          for (i=0; i<rbd->no_tracks; i++)
          {

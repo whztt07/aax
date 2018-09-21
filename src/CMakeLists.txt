@@ -1,12 +1,12 @@
 
 set(SRC_HEADERS
-  analyze.h
   api.h
   arch.h
   copyright.h
   objects.h
   ringbuffer.h
 )
+# analyze.h
 
 set(SRC_SOURCES
   aax_audioframe.c
@@ -20,11 +20,11 @@ set(SRC_SOURCES
   aax_scenery.c
   aax_sensor.c
   aax_support.c
-  analyze.c
   api.c
   arch.c
   objects.c
 )
+# analyze.c
 
 set(SOURCES "")
 foreach(src ${SRC_SOURCES})

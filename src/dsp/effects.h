@@ -127,7 +127,7 @@ extern _eff_function_tbl *_aaxEffects[AAX_EFFECT_MAX];
 #define _EFFECT_UNLOCK_DATA(P, e)	_aaxMutexUnLock(P->effect[e]->mutex)
 #define _EFFECT_FREE_LOCK(P, e)		_aaxMutexDestroy(P->effect[e]->mutex)
 #define _EFFECT_GET_DATA(P, e)          P->effect[e]->data
-#define _EFFECT_FREE_DATA(P, e)         if (P->effect[e]->destroy) P->effect[e]->destroy(P->effect[e]->data)
+#define _EFFECT_FREE_DATA(P, e)         if (P->effect[e]->data && P->effect[e]->destroy) P->effect[e]->destroy(P->effect[e]->data)
 #define _EFFECT_SET(P, e, p, v)         P->effect[e]->param[p] = v
 #define _EFFECT_SET_STATE(P, e, v)      P->effect[e]->state = v
 #define _EFFECT_SET_UPDATED(P, e, v)    P->effect[e]->updated = v

@@ -45,7 +45,7 @@
 #include <base/random.h>
 #include <base/memory.h>
 
-#include "analyze.h"
+// #include "analyze.h"
 #include "arch.h"
 #include "api.h"
 
@@ -59,7 +59,7 @@ static void _bufConvertDataToPCM24S(void*, void*, unsigned int, enum aaxFormat);
 static void _bufConvertDataFromPCM24S(void*, void*, unsigned int, unsigned int, enum aaxFormat, unsigned int);
 static int _bufCreateFromAAXS(_buffer_t*, const void*, float);
 static char** _bufGetDataFromAAXS(_buffer_t *buffer, char *file);
-static char** _bufCreateAAXS(_buffer_t*, void**, unsigned int);
+// static char** _bufCreateAAXS(_buffer_t*, void**, unsigned int);
 
 static unsigned char  _aaxFormatsBPS[AAX_FORMAT_MAX];
 
@@ -682,10 +682,11 @@ aaxBufferGetData(const aaxBuffer buffer)
             }
          }
       }
-
+#if 0
       if (handle->format == AAX_AAXS16S || handle->format == AAX_AAXS24S) {
          data = (void**)_bufCreateAAXS(handle, data, buf_samples);
       }
+#endif
    }
 
    return data;
@@ -731,7 +732,7 @@ aaxBufferReadFromStream(aaxConfig config, const char *url)
          buf = aaxBufferCreate(config, no_samples, tracks, fmt);
          if (buf)
          {
-             if(buf->url) free(buf->url);
+             FREE(buf->url);
              buf->url = strdup(url);
 
              aaxBufferSetSetup(buf, AAX_FREQUENCY, freq);
@@ -839,8 +840,8 @@ free_buffer(_buffer_t* handle)
          for (b=0; b<handle->pitch_levels; ++b) {
             handle->ringbuffer[b] = _bufDestroyRingBuffer(handle, b);
          }
-         if (handle->aaxs) free(handle->aaxs);
-         if (handle->url) free(handle->url);
+         FREE(handle->aaxs);
+         FREE(handle->url);
 
          /* safeguard against using already destroyed handles */
          handle->id = FADEDBAD;
@@ -1436,6 +1437,7 @@ _bufCreateFromAAXS(_buffer_t* buffer, const void *aaxs, float freq)
    return rv;
 }
 
+#if 0
 static char**
 _bufCreateAAXS(_buffer_t *handle, void **data, unsigned int samples)
 {
@@ -1452,6 +1454,7 @@ _bufCreateAAXS(_buffer_t *handle, void **data, unsigned int samples)
 
    return rv;
 }
+#endif
 
 static int
 _bufProcessWaveform(aaxBuffer buffer, float freq, float phase, float pitch, float staticity, unsigned char pitch_level, int voices, float spread, enum aaxWaveformType wtype, float ratio, enum aaxProcessingType ptype)
