@@ -40,7 +40,6 @@
 void
 _aaxRingBufferMixStereo16(_aaxRingBufferSample *drbd, const _aaxRingBufferSample *srbd, CONST_MIX_PTRPTR_T sptr, const unsigned char *router, _aax2dProps *ep2d, size_t offs, size_t dno_samples, float gain, UNUSED(float svol), float evol, UNUSED(char cptr))
 {
-   _aaxLFOData *lfo;
    unsigned int rbd_tracks;
    unsigned int rbs_tracks;
    unsigned int track;
@@ -53,23 +52,30 @@ _aaxRingBufferMixStereo16(_aaxRingBufferSample *drbd, const _aaxRingBufferSample
 
    /** Mix */
    g = 1.0f;
-   lfo = _FILTER_GET_DATA(ep2d, DYNAMIC_GAIN_FILTER);
-   if (lfo && lfo->envelope)				// envelope follow
+   if (_FILTER_GET_STATE(ep2d, DYNAMIC_GAIN_FILTER))
    {
-      void *env = _EFFECT_GET_DATA(ep2d, TIMED_PITCH_EFFECT);
+      _aaxLFOData *lfo;
 
-      g = 0.0f;
-      for (track=0; track<rbd_tracks; track++)
+      _FILTER_LOCK_DATA(ep2d, DYNAMIC_GAIN_FILTER);
+      lfo = _FILTER_GET_DATA(ep2d, DYNAMIC_GAIN_FILTER);
+      if (lfo && lfo->envelope)				// envelope follow
       {
-         unsigned int rbs_track = track % rbs_tracks;
-         float gain;
+         float lvl = -0.5f;
 
-         DBG_TESTNAN(sptr[rbs_track]+offs, dno_samples);
-         gain = 1.0f-lfo->get(lfo, env, sptr[rbs_track]+offs, track, dno_samples);
-         if (lfo->inv) g = 1.0f/gain;
-         g += gain;
+         g = 0.0f;
+         for (track=0; track<rbd_tracks; track++)
+         {
+            unsigned int rbs_track = track % rbs_tracks;
+            float gain;
+
+            DBG_TESTNAN(sptr[rbs_track]+offs, dno_samples);
+            gain = 1.0f-lfo->get(lfo, sptr[rbs_track]+offs, lvl, track, dno_samples);
+            if (lfo->inv) g = 1.0f/gain;
+            g += gain;
+         }
+         g /= rbd_tracks;
       }
-      g /= rbd_tracks;
+      _FILTER_UNLOCK_DATA(ep2d, DYNAMIC_GAIN_FILTER);
    }
 
    for (track=0; track<rbd_tracks; track++)

@@ -500,14 +500,15 @@ aaxMixerSetFilter(aaxConfig config, aaxFilter f)
          switch (filter->type)
          {
          case AAX_VOLUME_FILTER:
-            _FILTER_SET(p2d, type, 0, _FILTER_GET_SLOT(filter, 0, 0));
-                /* gain min and gain max are read-only for the mixer      */
-            /* _FILTER_SET(p2d, type, 1, _FILTER_GET_SLOT(filter, 0, 1)); */
-            /* _FILTER_SET(p2d, type, 2, _FILTER_GET_SLOT(filter, 0, 2)); */
-            _FILTER_SET(p2d, type, 3, _FILTER_GET_SLOT(filter, 0, 3));
-            _FILTER_SET_STATE(p2d, type, _FILTER_GET_SLOT_STATE(filter));
-            _FILTER_SWAP_SLOT_DATA(p2d, type, filter, 0);
+         {
+            float min = _FILTER_GET(p2d, type, 1);
+            float max = _FILTER_GET(p2d, type, 2);
+            _FILTER_SWAP_SLOT(p2d, type, filter, 0);
+            /* gain min and gain max are read-only for the mixer      */
+            _FILTER_SET(p2d, type, 1, min);
+            _FILTER_SET(p2d, type, 2, max);
             break;
+         }
          case AAX_COMPRESSOR:
          case AAX_DYNAMIC_GAIN_FILTER:
          case AAX_BITCRUSHER_FILTER:

@@ -51,7 +51,7 @@ static void _reverb_run(void*, MIX_PTR_T, CONST_MIX_PTR_T, MIX_PTR_T, size_t, si
 _aaxRingBufferOcclusionData* _occlusion_create(_aaxRingBufferOcclusionData*, _aaxFilterInfo*, int, float);
 void _occlusion_prepare(_aaxEmitter*, _aax3dProps*, void*);
 void _occlusion_run(void*, MIX_PTR_T, CONST_MIX_PTR_T, MIX_PTR_T, size_t, unsigned int, const void*);
-void _freqfilter_run(void*, MIX_PTR_T, CONST_MIX_PTR_T, size_t, size_t, size_t, unsigned int, void*, void*, unsigned char);
+void _freqfilter_run(void*, MIX_PTR_T, CONST_MIX_PTR_T, size_t, size_t, size_t, unsigned int, void*, float, unsigned char);
 
 static aaxEffect
 _aaxReverbEffectCreate(_aaxMixerInfo *info, enum aaxEffectType type)
@@ -370,7 +370,7 @@ _reverb_run(void *rb, MIX_PTR_T dptr, CONST_MIX_PTR_T sptr, MIX_PTR_T scratch,
          int q;
 
          _aax_memcpy(scratch-ds, reverb->reverb_history[track], bytes);
-         filter->run(rbd, scratch, scratch, 0, no_samples, 0, track, filter, NULL, 0);
+         filter->run(rbd, scratch, scratch, 0, no_samples, 0, track, filter, -0.5f, 0);
          for(q=0; q<snum; ++q)
          {
             float volume = gain * reverb->loopback[q].gain / (snum+1);
@@ -385,7 +385,7 @@ _reverb_run(void *rb, MIX_PTR_T dptr, CONST_MIX_PTR_T sptr, MIX_PTR_T scratch,
          _aax_memcpy(reverb->reverb_history[track], scratch+no_samples-ds, bytes);
       }
 
-      filter->run(rbd, dptr, scratch, 0, no_samples, 0, track, filter, NULL,0);
+      filter->run(rbd, dptr, scratch, 0, no_samples, 0, track, filter, -0.5f,0);
       if (occlusion) {
          occlusion->run(rbd, dptr, sptr, scratch, no_samples, track,occlusion);
       }

@@ -67,11 +67,11 @@ aaxFilterDestroy(aaxFilter f)
    int rv = AAX_FALSE;
    if (filter)
    {
-     _flt_function_tbl *flt = _aaxFilters[filter->type-1];
-//    _aaxMutexLock(filter->slot[0]->mutex);
-//    _aaxMutexDestroy(filter->slot[0]->mutex);
-      filter->slot[0]->mutex = NULL;
+      _flt_function_tbl *flt = _aaxFilters[filter->type-1];
+
+      _aaxMutexLock(filter->slot[0]->mutex);
       rv = flt->destroy(filter);
+      _aaxMutexDestroy(filter->slot[0]->mutex);
    }
    return rv;
 }

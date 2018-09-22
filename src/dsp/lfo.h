@@ -40,7 +40,7 @@ _convert_fn _compress;
 #define _MAX_ENVELOPE_STAGES            6
 #define ENVELOPE_FOLLOW_STEP_CVT(a)     _MINMAX(-0.1005f+powf((a), 0.25f)/3.15f, 0.0f, 1.0f)
 
-typedef float _aaxLFOGetFn(void *, void*, const void*, unsigned, size_t);
+typedef float _aaxLFOGetFn(void *, const void*, float, unsigned, size_t);
 
 _aaxLFOGetFn _aaxLFOGetSine;
 _aaxLFOGetFn _aaxLFOGetSquare;

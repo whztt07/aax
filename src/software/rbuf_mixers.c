@@ -126,23 +126,20 @@ _aaxRingBufferProcessMixer(_aaxRingBuffer *drb, _aaxRingBuffer *srb, _aax2dProps
     */
    if (new_srb_pos_sec >= -dduration)
    {
-      _aaxLFOData *bitcrush;
-      _aaxRingBufferReflectionData *reflections;
-      _aaxRingBufferDelayEffectData* delay_effect;
-      _aaxRingBufferFreqFilterData* freq_filter;
+      int reflections, delay_effect, freq_filter;
+      int bitcrush, dist_state, ringmodulator;
       size_t dest_pos, dno_samples, dend;
       size_t src_pos, sstart, sno_samples;
       size_t rdesamps, cno_samples;
-      int dist_state, ringmodulator;
       unsigned int sno_tracks;
       unsigned char sbps;
 
-      reflections = _EFFECT_GET_DATA(p2d, REVERB_EFFECT);
-      delay_effect = _EFFECT_GET_DATA(p2d, DELAY_EFFECT);  // phasing, etc.
-      freq_filter = _FILTER_GET_DATA(p2d, FREQUENCY_FILTER);
+      reflections = _EFFECT_GET_STATE(p2d, REVERB_EFFECT);
+      delay_effect = _EFFECT_GET_STATE(p2d, DELAY_EFFECT);  // phasing, etc.
+      freq_filter = _FILTER_GET_STATE(p2d, FREQUENCY_FILTER);
       dist_state = _EFFECT_GET_STATE(p2d, DISTORTION_EFFECT);
       ringmodulator = _EFFECT_GET_STATE(p2d, RINGMODULATE_EFFECT);
-      bitcrush = _FILTER_GET_DATA(p2d, BITCRUSHER_FILTER);
+      bitcrush = _FILTER_GET_STATE(p2d, BITCRUSHER_FILTER);
 
       /* source */
       sstart = 0;

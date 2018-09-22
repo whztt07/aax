@@ -506,6 +506,8 @@ aaxAudioFrameSetFilter(aaxFrame frame, aaxFilter f)
          if (_EFFECT_GET_UPDATED(p3d, VELOCITY_EFFECT) == AAX_FALSE)
          {
             _aaxRingBufferDistanceData *data;
+
+            _FILTER_LOCK_DATA(p3d, DISTANCE_FILTER);
             data = _FILTER_GET_DATA(p3d, DISTANCE_FILTER);
             if (data->next.T_K != 0.0f && data->next.hr_pct != 0.0f)
             {
@@ -515,6 +517,7 @@ aaxAudioFrameSetFilter(aaxFrame frame, aaxFilter f)
                   _EFFECT_SET(p3d, VELOCITY_EFFECT, AAX_SOUND_VELOCITY, vs);
                }
             }
+            _FILTER_UNLOCK_DATA(p3d, DISTANCE_FILTER);
          }
          break;
       case AAX_DIRECTIONAL_FILTER:
@@ -538,7 +541,7 @@ aaxAudioFrameSetFilter(aaxFrame frame, aaxFilter f)
 
          _FILTER_SWAP_SLOT(p3d, type, filter, 1);
          _FILTER_COPY_DATA(p3d, p2d, type);
-         if (_FILTER_GET_DATA(p3d, type)) {
+         if (_FILTER_GET_STATE(p3d, type)) {
             _PROP_OCCLUSION_SET_DEFINED(p3d);
          }
          break;
@@ -623,7 +626,7 @@ aaxAudioFrameSetEffect(aaxFrame frame, aaxEffect e)
          _EFFECT_SWAP_SLOT(p2d, type, effect, 0);
          _EFFECT_SWAP_SLOT(p3d, type, effect, 1);
          _EFFECT_COPY_DATA(p3d, p2d, type);
-         if (_EFFECT_GET_DATA(p2d, type)) {
+         if (_EFFECT_GET_STATE(p2d, type)) {
             _PROP_OCCLUSION_SET_DEFINED(p3d);
          }
 
@@ -836,7 +839,12 @@ aaxAudioFrameRegisterSensor(const aaxFrame frame, const aaxConfig sensor)
             {
                _EFFECT_COPY(sp3d, mp3d, VELOCITY_EFFECT, AAX_SOUND_VELOCITY);
                _EFFECT_COPY(sp3d, mp3d, VELOCITY_EFFECT, AAX_DOPPLER_FACTOR);
+
+               _EFFECT_LOCK_DATA(sp3d, VELOCITY_EFFECT);
+               _EFFECT_LOCK_DATA(mp3d, VELOCITY_EFFECT);
                _EFFECT_COPY_DATA(sp3d, mp3d, VELOCITY_EFFECT);
+               _EFFECT_UNLOCK_DATA(mp3d, VELOCITY_EFFECT);
+               _EFFECT_UNLOCK_DATA(sp3d, VELOCITY_EFFECT);
             }
             _EFFECT_COPY(sp3d, mp3d, VELOCITY_EFFECT, AAX_LIGHT_VELOCITY);
 
@@ -1074,7 +1082,12 @@ aaxAudioFrameRegisterEmitter(const aaxFrame frame, const aaxEmitter em)
             {
                _EFFECT_COPY(ep3d, mp3d, VELOCITY_EFFECT, AAX_SOUND_VELOCITY);
                _EFFECT_COPY(ep3d, mp3d, VELOCITY_EFFECT, AAX_DOPPLER_FACTOR);
+
+               _EFFECT_LOCK_DATA(ep3d, VELOCITY_EFFECT);
+               _EFFECT_LOCK_DATA(mp3d, VELOCITY_EFFECT);
                _EFFECT_COPY_DATA(ep3d, mp3d, VELOCITY_EFFECT);
+               _EFFECT_UNLOCK_DATA(mp3d, VELOCITY_EFFECT);
+               _EFFECT_UNLOCK_DATA(ep3d, VELOCITY_EFFECT);
             }
             _EFFECT_COPY(ep3d, mp3d, VELOCITY_EFFECT, AAX_LIGHT_VELOCITY);
 
@@ -1223,7 +1236,12 @@ aaxAudioFrameRegisterAudioFrame(const aaxFrame frame, const aaxFrame subframe)
          {
             _EFFECT_COPY(fp3d, mp3d, VELOCITY_EFFECT, AAX_SOUND_VELOCITY);
             _EFFECT_COPY(fp3d, mp3d, VELOCITY_EFFECT, AAX_DOPPLER_FACTOR);
+
+            _EFFECT_LOCK_DATA(fp3d, VELOCITY_EFFECT);
+            _EFFECT_LOCK_DATA(mp3d, VELOCITY_EFFECT);
             _EFFECT_COPY_DATA(fp3d, mp3d, VELOCITY_EFFECT);
+            _EFFECT_UNLOCK_DATA(mp3d, VELOCITY_EFFECT);
+            _EFFECT_UNLOCK_DATA(fp3d, VELOCITY_EFFECT);
          }
          _EFFECT_COPY(fp3d, mp3d, VELOCITY_EFFECT, AAX_LIGHT_VELOCITY);
 

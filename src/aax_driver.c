@@ -427,11 +427,13 @@ aaxDriverOpen(aaxConfig config)
                filter = aaxFilterCreate(handle, AAX_FREQUENCY_FILTER);
                aaxFilterSetSlot(filter, 0, AAX_LINEAR, fc, 1.0f, 0.0f, 1.0f);
                aaxFilterSetState(filter, AAX_BESSEL|AAX_24DB_OCT);
-               _FILTER_SWAP_SLOT_DATA(handle, SURROUND_CROSSOVER_LP, filter, 0);
+               _FILTER_SWAP_SLOT(handle, SURROUND_CROSSOVER_LP, filter, 0);
                aaxFilterDestroy(filter);
 
+               _FILTER_LOCK_DATA(handle, SURROUND_CROSSOVER_LP);
                freqfilter = _FILTER_GET_DATA(handle, SURROUND_CROSSOVER_LP);
                k = _aax_movingaverage_compute(fc, freqfilter->fs);
+               _FILTER_UNLOCK_DATA(handle, SURROUND_CROSSOVER_LP);
                freqfilter->k = k;
             }
             else if (handle->info->mode == AAX_MODE_WRITE_HRTF)
@@ -443,7 +445,7 @@ aaxDriverOpen(aaxConfig config)
                filter = aaxFilterCreate(handle, AAX_FREQUENCY_FILTER);
                aaxFilterSetSlot(filter, 0, AAX_LINEAR, 1000.0f, 1.0f,0.0f,1.0f);
                aaxFilterSetState(filter, AAX_BESSEL|AAX_6DB_OCT);
-               _FILTER_SWAP_SLOT_DATA(handle, type, filter, 0);
+               _FILTER_SWAP_SLOT(handle, type, filter, 0);
                aaxFilterDestroy(filter);
             }
          }

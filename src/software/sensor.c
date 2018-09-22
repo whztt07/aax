@@ -195,21 +195,32 @@ _aaxSensorsProcessSensor(void *id, _aaxRingBuffer *drb, _aax2dProps *p2d, int de
 
             do
             {
-               _aaxLFOData *lfo;
-
-               lfo = _EFFECT_GET_DATA(p2d, DYNAMIC_PITCH_EFFECT);
-               if (lfo)
+               p2d->final.pitch_lfo = 1.0f;
+               if (_EFFECT_GET_STATE(p2d, DYNAMIC_PITCH_EFFECT))
                {
-                  p2d->final.pitch_lfo = lfo->get(lfo, NULL, NULL, 0, 0);
-                  p2d->final.pitch_lfo -= lfo->min;
-               } else {
-                  p2d->final.pitch_lfo = 1.0f;
+                  _aaxLFOData *lfo;
+
+                  _EFFECT_LOCK_DATA(p2d, DYNAMIC_PITCH_EFFECT);
+                  lfo = _EFFECT_GET_DATA(p2d, DYNAMIC_PITCH_EFFECT);
+                  if (lfo)
+                  {
+                     p2d->final.pitch_lfo = lfo->get(lfo, NULL, -0.5f, 0, 0);
+                     p2d->final.pitch_lfo -= lfo->min;
+                  }
+                  _EFFECT_UNLOCK_DATA(p2d, DYNAMIC_PITCH_EFFECT);
                }
-               lfo = _FILTER_GET_DATA(p2d, DYNAMIC_GAIN_FILTER);
-               if (lfo && !lfo->envelope) {
-                  p2d->final.gain_lfo = lfo->get(lfo, NULL, NULL, 0, 0);
-               } else {
-                  p2d->final.gain_lfo = 1.0f;
+
+                p2d->final.gain_lfo = 1.0f;
+               if (_FILTER_GET_STATE(p2d, DYNAMIC_GAIN_FILTER))
+               {
+                  _aaxLFOData *lfo;
+
+                  _FILTER_LOCK_DATA(p2d, DYNAMIC_GAIN_FILTER);
+                  lfo = _FILTER_GET_DATA(p2d, DYNAMIC_GAIN_FILTER);
+                  if (lfo && !lfo->envelope) {
+                     p2d->final.gain_lfo = lfo->get(lfo, NULL, -0.5f, 0, 0);
+                  }
+                  _FILTER_UNLOCK_DATA(p2d, DYNAMIC_GAIN_FILTER);
                }
                res = drb->mix2d(drb, ssr_rb, smixer->info, smixer->props2d, p2d, 0, 1.0f, NULL);
                _intBufReleaseData(sptr_rb, _AAX_RINGBUFFER);

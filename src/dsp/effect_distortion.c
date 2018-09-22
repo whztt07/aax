@@ -41,7 +41,7 @@
 #include "api.h"
 #include "arch.h"
 
-static void _distortion_run(void*, MIX_PTR_T, CONST_MIX_PTR_T, size_t, size_t, size_t, unsigned int, void*, void*);
+static void _distortion_run(void*, MIX_PTR_T, CONST_MIX_PTR_T, size_t, size_t, size_t, unsigned int, void*, float lvl);
 
 static aaxEffect
 _aaxDistortionEffectCreate(_aaxMixerInfo *info, enum aaxEffectType type)
@@ -217,7 +217,7 @@ _eff_function_tbl _aaxDistortionEffect =
 void
 _distortion_run(void *rb, MIX_PTR_T d, CONST_MIX_PTR_T s,
                 size_t dmin, size_t dmax, size_t ds,
-                unsigned int track, void *data, void *env)
+                unsigned int track, void *data, float lvl)
 {
    static const size_t bps = sizeof(MIX_T);
    _aaxRingBufferSample *rbd = (_aaxRingBufferSample*)rb;
@@ -248,7 +248,7 @@ _distortion_run(void *rb, MIX_PTR_T d, CONST_MIX_PTR_T s,
 // DBG_MEMCLR(1, d-ds, ds+dmax, bps);
 
    if (lfo) {
-      lfo_fact = lfo->get(lfo, env, sptr, track, no_samples);
+      lfo_fact = lfo->get(lfo, sptr, lvl, track, no_samples);
    }
    fact = params[AAX_DISTORTION_FACTOR]*lfo_fact;
    clip = params[AAX_CLIPPING_FACTOR];

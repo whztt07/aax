@@ -41,7 +41,7 @@
 #include "arch.h"
 
 
-static void _modulator_run(MIX_PTR_T, size_t, size_t, void*, void*, unsigned int);
+static void _modulator_run(MIX_PTR_T, size_t, size_t, void*, float, unsigned int);
 
 
 static aaxEffect
@@ -221,14 +221,14 @@ _eff_function_tbl _aaxModulatorEffect =
 };
 
 void
-_modulator_run(MIX_PTR_T s, size_t end, size_t no_samples, void *data, void *env, unsigned int track)
+_modulator_run(MIX_PTR_T s, size_t end, size_t no_samples, void *data, float lvl, unsigned int track)
 {
       _aaxRingBufferModulatorData *modulate = data;
       float f, gain, p, step;
       unsigned int i;
 
       gain = modulate->gain;
-      f = modulate->lfo.get(&modulate->lfo, env, s, track, end);
+      f = modulate->lfo.get(&modulate->lfo, s, lvl, track, end);
       step = f/(GMATH_2PI*no_samples);
 
       p = modulate->phase[track];

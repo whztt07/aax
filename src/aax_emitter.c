@@ -1314,13 +1314,15 @@ _emitterSetFilter(_aaxEmitter *src, _filter_t *filter)
    case AAX_FREQUENCY_FILTER:
    case AAX_DYNAMIC_GAIN_FILTER:
    case AAX_BITCRUSHER_FILTER:
-      _FILTER_SWAP_SLOT(p2d, type, filter, 0)
+      _FILTER_SWAP_SLOT(p2d, type, filter, 0);
       break;
    case AAX_DISTANCE_FILTER:
-      _FILTER_SWAP_SLOT(p3d, type, filter, 0)
+      _FILTER_SWAP_SLOT(p3d, type, filter, 0);
       if (_EFFECT_GET_UPDATED(p3d, VELOCITY_EFFECT) == AAX_FALSE)
       {
          _aaxRingBufferDistanceData *data;
+
+         _FILTER_LOCK_DATA(p3d, DISTANCE_FILTER);
          data = _FILTER_GET_DATA(p3d, DISTANCE_FILTER);
          if (data->next.T_K != 0.0f && data->next.hr_pct != 0.0f)
          {
@@ -1330,6 +1332,7 @@ _emitterSetFilter(_aaxEmitter *src, _filter_t *filter)
                _EFFECT_SET(p3d, VELOCITY_EFFECT, AAX_SOUND_VELOCITY, vs);
             }
          }
+         _FILTER_UNLOCK_DATA(p3d, DISTANCE_FILTER);
       }
       break;
    case AAX_DIRECTIONAL_FILTER:
@@ -1394,11 +1397,8 @@ _emitterSetEffect(_aaxEmitter *src, _effect_t *effect)
       break;
    case AAX_DYNAMIC_PITCH_EFFECT:
    {
-      _aaxLFOData *lfo;
-
       _EFFECT_SWAP_SLOT(p2d, type, effect, 0);
-      lfo = _EFFECT_GET_DATA(p2d, DYNAMIC_PITCH_EFFECT);
-      if (lfo) /* enabled */
+      if (_EFFECT_GET_STATE(p2d, DYNAMIC_PITCH_EFFECT))
       {
          float lfo_val = _EFFECT_GET_SLOT(effect, 0, AAX_LFO_FREQUENCY);
          _PROP_DYNAMIC_PITCH_SET_DEFINED(src->props3d);

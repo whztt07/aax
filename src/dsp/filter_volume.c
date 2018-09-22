@@ -46,7 +46,7 @@
 _aaxRingBufferOcclusionData* _occlusion_create(_aaxRingBufferOcclusionData*, _aaxFilterInfo*, int, float);
 void _occlusion_prepare(_aaxEmitter*, _aax3dProps*, void*);
 void _occlusion_run(void*, MIX_PTR_T, CONST_MIX_PTR_T, MIX_PTR_T, size_t, unsigned int, const void*);
-void _freqfilter_run(void*, MIX_PTR_T, CONST_MIX_PTR_T, size_t, size_t, size_t, unsigned int, void*, void*, unsigned char);
+void _freqfilter_run(void*, MIX_PTR_T, CONST_MIX_PTR_T, size_t, size_t, size_t, unsigned int, void*, float, unsigned char);
 
 static aaxFilter
 _aaxVolumeFilterCreate(_aaxMixerInfo *info, enum aaxFilterType type)
@@ -181,7 +181,7 @@ _flt_function_tbl _aaxVolumeFilter =
 #endif
 
 static float
-_occlusion_lfo(void* data, UNUSED(void *env), UNUSED(const void *ptr), UNUSED(unsigned track), UNUSED(size_t num))
+_occlusion_lfo(void* data, UNUSED(const void *ptr), UNUSED(float lvl), UNUSED(unsigned track), UNUSED(size_t num))
 {
   _aaxLFOData* lfo = (_aaxLFOData*)data;
   _aaxRingBufferOcclusionData *occlusion;
@@ -432,6 +432,6 @@ _occlusion_run(void *rb, MIX_PTR_T dptr, CONST_MIX_PTR_T sptr, UNUSED(MIX_PTR_T 
    assert(occlusion);
 
    freq_flt = &occlusion->freq_filter;
-   freq_flt->run(rbd, scratch, sptr, 0, samples, 0, track, freq_flt, NULL, 0);
+   freq_flt->run(rbd, scratch, sptr, 0, samples, 0, track, freq_flt, -0.5f, 0);
    rbd->add(dptr, scratch, samples, 1.0f, 0.0f);
 }

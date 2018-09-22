@@ -47,7 +47,7 @@
 
 
 static void _phasing_destroy(void*);
-static void _phasing_run(void*, MIX_PTR_T, CONST_MIX_PTR_T, MIX_PTR_T, size_t, size_t, size_t, size_t, void*, void*, unsigned int);
+static void _phasing_run(void*, MIX_PTR_T, CONST_MIX_PTR_T, MIX_PTR_T, size_t, size_t, size_t, size_t, void*, float, unsigned int);
 
 static aaxEffect
 _aaxPhasingEffectCreate(_aaxMixerInfo *info, enum aaxEffectType type)
@@ -275,7 +275,7 @@ _phasing_destroy(void *ptr)
 static void
 _phasing_run(void *rb, MIX_PTR_T d, CONST_MIX_PTR_T s, MIX_PTR_T scratch,
              size_t start, size_t end, size_t no_samples, size_t ds,
-             void *data, void *env, unsigned int track)
+             void *data, float lvl, unsigned int track)
 {
    static const size_t bps = sizeof(MIX_T);
    _aaxRingBufferSample *rbd = (_aaxRingBufferSample*)rb;
@@ -306,7 +306,7 @@ _phasing_run(void *rb, MIX_PTR_T d, CONST_MIX_PTR_T s, MIX_PTR_T scratch,
    }
    else
    {
-      noffs = (size_t)effect->lfo.get(&effect->lfo, env, s, track, end);
+      noffs = (size_t)effect->lfo.get(&effect->lfo, s, lvl, track, end);
       effect->delay.sample_offs[track] = noffs;
       effect->curr_noffs[track] = noffs;
    }

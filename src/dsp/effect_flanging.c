@@ -45,7 +45,7 @@
 #define FLANGING_MAX	60e-3f
 
 static void _flanging_destroy(void*);
-static void _flanging_run(void*, MIX_PTR_T, CONST_MIX_PTR_T, MIX_PTR_T, size_t, size_t, size_t, size_t, void*, void*, unsigned int);
+static void _flanging_run(void*, MIX_PTR_T, CONST_MIX_PTR_T, MIX_PTR_T, size_t, size_t, size_t, size_t, void*, float, unsigned int);
 
 static aaxEffect
 _aaxFlangingEffectCreate(_aaxMixerInfo *info, enum aaxEffectType type)
@@ -272,7 +272,7 @@ _flanging_destroy(void *ptr)
 void
 _flanging_run(void *rb, MIX_PTR_T d, CONST_MIX_PTR_T s, UNUSED(MIX_PTR_T scratch),
              size_t start, size_t end, size_t no_samples, size_t ds,
-             void *data, void *env, unsigned int track)
+             void *data, float lvl, unsigned int track)
 {
    _aaxRingBufferSample *rbd = (_aaxRingBufferSample*)rb;
    static const size_t bps = sizeof(MIX_T);
@@ -305,7 +305,7 @@ _flanging_run(void *rb, MIX_PTR_T d, CONST_MIX_PTR_T s, UNUSED(MIX_PTR_T scratch
    }
    else
    {
-      noffs = (size_t)effect->lfo.get(&effect->lfo, env, s, track, end);
+      noffs = (size_t)effect->lfo.get(&effect->lfo, s, lvl, track, end);
       effect->delay.sample_offs[track] = noffs;
       effect->curr_noffs[track] = noffs;
    }

@@ -162,6 +162,7 @@ extern _eff_function_tbl *_aaxEffects[AAX_EFFECT_MAX];
 #define _EFFECT_COPYD3D(G1, G2, e, p)   _EFFECT_COPY(G1->props3d, G2->props3d, e, p)
 #define _EFFECT_COPYD3D_DATA(G1, G2, e) _EFFECT_COPY_DATA(G1->props3d, G2->props3d, e)
 
+#if 0
 #define _EFFECT_SWAP_MUTEX(P, e, E, s)                                         \
  E->slot[s]->mutex=_aaxAtomicPointerSwap(&P->effect[e]->mutex,E->slot[s]->mutex);
 
@@ -178,6 +179,11 @@ extern _eff_function_tbl *_aaxEffects[AAX_EFFECT_MAX];
  _EFFECT_SET_STATE(P, t, _EFFECT_GET_SLOT_STATE(f));                           \
  _EFFECT_SWAP_MUTEX(P, t, f, s);                                               \
  _EFFECT_SWAP_SLOT_DATA(P, t, f, s);
+#else
+#define _EFFECT_SWAP_SLOT(P, t, E, s) \
+  E->slot[s] = _aaxAtomicPointerSwap(&P->filter[t], E->slot[s])
+
+#endif
 
 float _velocity_calculcate_vs(_aaxEnvData*);
 FLOAT _velocity_prepare(_aax3dProps*, _aaxDelayed3dProps*, _aaxDelayed3dProps*, _aaxDelayed3dProps*, vec3f_ptr, float, float, float);

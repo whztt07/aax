@@ -107,12 +107,13 @@ enum _aaxFreqFilterType
 typedef struct
 {
    int state;
-   int updated;
    float param[4];
 
    void* data;          /* filter and effect specific interal data structure */
-   void* mutex;		/* mutex to make sure data destruction is safe       */
    void (*destroy)(void*); /* function to call to free the data structure    */
+   void* mutex;		   /* mutex to make sure data destruction is safe    */
+
+   char updated;
 
 } _aaxDSPInfo;
 

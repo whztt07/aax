@@ -123,14 +123,14 @@ _aaxAudioFrameProcess(_aaxRingBuffer *dest_rb, _frame_t *subframe,
    lfo = _EFFECT_GET_DATA(fp2d, DYNAMIC_PITCH_EFFECT);
    if (lfo)
    {
-      fp2d->final.pitch_lfo = lfo->get(lfo, NULL, NULL, 0, 0);
+      fp2d->final.pitch_lfo = lfo->get(lfo, NULL, -0.5f, 0, 0);
       fp2d->final.pitch_lfo -= lfo->min;
    } else {
       fp2d->final.pitch_lfo = 1.0f;
    }
    lfo = _FILTER_GET_DATA(fp2d, DYNAMIC_GAIN_FILTER);
    if (lfo && !lfo->envelope) {
-      fp2d->final.gain_lfo = lfo->get(lfo, NULL, NULL, 0, 0);
+      fp2d->final.gain_lfo = lfo->get(lfo, NULL, -0.5f, 0, 0);
    } else {
       fp2d->final.gain_lfo = 1.0f;
    }

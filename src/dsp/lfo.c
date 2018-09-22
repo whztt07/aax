@@ -214,7 +214,7 @@ _compressor_set_timing(_aaxLFOData *lfo)
  * (between lfo->min and lfo->max).
  */
 float
-_aaxLFOGetFixedValue(void* data, UNUSED(void *env), UNUSED(const void *ptr), unsigned track, UNUSED(size_t end))
+_aaxLFOGetFixedValue(void* data, UNUSED(const void *ptr), UNUSED(float lvl), unsigned track, UNUSED(size_t end))
 {
    _aaxLFOData* lfo = (_aaxLFOData*)data;
    float rv = 1.0f;
@@ -228,7 +228,7 @@ _aaxLFOGetFixedValue(void* data, UNUSED(void *env), UNUSED(const void *ptr), uns
 }
 
 float
-_aaxLFOGetTriangle(void* data, UNUSED(void *env), UNUSED(const void *ptr), unsigned track, UNUSED(size_t end))
+_aaxLFOGetTriangle(void* data, UNUSED(const void *ptr), UNUSED(float lvl), unsigned track, UNUSED(size_t end))
 {
    _aaxLFOData* lfo = (_aaxLFOData*)data;
    float rv = 1.0f;
@@ -265,7 +265,7 @@ _fast_sin1(float x)
 }
 
 float
-_aaxLFOGetSine(void* data, UNUSED(void *env), UNUSED(const void *ptr), unsigned track, UNUSED(size_t end))
+_aaxLFOGetSine(void* data, UNUSED(const void *ptr), UNUSED(float lvl), unsigned track, UNUSED(size_t end))
 {
    _aaxLFOData* lfo = (_aaxLFOData*)data;
    float rv = 1.0f;
@@ -292,7 +292,7 @@ _aaxLFOGetSine(void* data, UNUSED(void *env), UNUSED(const void *ptr), unsigned 
 }
 
 float
-_aaxLFOGetSquare(void* data, UNUSED(void *env), UNUSED(const void *ptr), unsigned track, UNUSED(size_t end))
+_aaxLFOGetSquare(void* data, UNUSED(const void *ptr), UNUSED(float lvl), unsigned track, UNUSED(size_t end))
 {
    _aaxLFOData* lfo = (_aaxLFOData*)data;
    float rv = 1.0f;
@@ -316,7 +316,7 @@ _aaxLFOGetSquare(void* data, UNUSED(void *env), UNUSED(const void *ptr), unsigne
 }
 
 float
-_aaxLFOGetImpulse(void* data, UNUSED(void *env), UNUSED(const void *ptr), unsigned track, UNUSED(size_t end))
+_aaxLFOGetImpulse(void* data, UNUSED(const void *ptr), UNUSED(float lvl), unsigned track, UNUSED(size_t end))
 {
    _aaxLFOData* lfo = (_aaxLFOData*)data;
    float rv = 1.0f;
@@ -343,7 +343,7 @@ _aaxLFOGetImpulse(void* data, UNUSED(void *env), UNUSED(const void *ptr), unsign
 }
 
 float
-_aaxLFOGetSawtooth(void* data, UNUSED(void *env), UNUSED(const void *ptr), unsigned track, UNUSED(size_t end))
+_aaxLFOGetSawtooth(void* data, UNUSED(const void *ptr), UNUSED(float lvl), unsigned track, UNUSED(size_t end))
 {
    _aaxLFOData* lfo = (_aaxLFOData*)data;
    float rv = 1.0f;
@@ -367,7 +367,7 @@ _aaxLFOGetSawtooth(void* data, UNUSED(void *env), UNUSED(const void *ptr), unsig
 }
 
 float
-_aaxLFOGetGainFollow(void* data, void *env, const void *ptr, unsigned track, size_t num)
+_aaxLFOGetGainFollow(void* data, const void *ptr, float lvl, unsigned track, size_t num)
 {
    _aaxLFOData* lfo = (_aaxLFOData*)data;
    static const float div = 1.0f / (float)0x000fffff;
@@ -379,18 +379,13 @@ _aaxLFOGetGainFollow(void* data, void *env, const void *ptr, unsigned track, siz
       /* In stereo-link mode the left track (0) provides the data */
       if (track == 0 || lfo->stereo_lnk == AAX_FALSE)
       {
-         float lvl, fact;
+         float fact;
 
-         if (!env)
+         if (lvl < 0.0f)
          {
             float rms, peak;
             _batch_get_average_rms(ptr, num, &rms, &peak);
             lvl = _MINMAX(rms*div, 0.0f, 1.0f);
-         }
-         else
-         {  
-            _aaxEnvelopeData *genv = (_aaxEnvelopeData*)env;
-            lvl = genv->value_total;
          }
 
          olvl = lfo->value[track];
@@ -408,7 +403,7 @@ _aaxLFOGetGainFollow(void* data, void *env, const void *ptr, unsigned track, siz
 }
 
 float
-_aaxLFOGetCompressor(void* data, UNUSED(void *env), const void *ptr, unsigned track, size_t num)
+_aaxLFOGetCompressor(void* data, const void *ptr, UNUSED(float lvl), unsigned track, size_t num)
 {
    _aaxLFOData* lfo = (_aaxLFOData*)data;
    static const float div = 1.0f / (float)0x007fffff;

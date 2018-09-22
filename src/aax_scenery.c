@@ -180,6 +180,8 @@ aaxScenerySetFilter(aaxConfig config, aaxFilter f)
                if (_EFFECT_GET_UPDATED(p3d, VELOCITY_EFFECT) == AAX_FALSE)
                {
                   _aaxRingBufferDistanceData *data;
+
+                  _FILTER_LOCK_DATA(p3d, DISTANCE_FILTER);
                   data = _FILTER_GET_DATA(p3d, DISTANCE_FILTER);
                   if (data->next.T_K != 0.0f && data->next.hr_pct != 0.0f)
                   {
@@ -189,6 +191,7 @@ aaxScenerySetFilter(aaxConfig config, aaxFilter f)
                         _EFFECT_SET(p3d, VELOCITY_EFFECT, AAX_SOUND_VELOCITY, vs);
                      }
                   }
+                  _FILTER_UNLOCK_DATA(p3d, DISTANCE_FILTER);
                }
                rv = AAX_TRUE;
                break;

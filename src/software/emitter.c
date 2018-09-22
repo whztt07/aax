@@ -364,20 +364,27 @@ _aaxEmitterPrepare3d(_aaxEmitter *src,  const _aaxMixerInfo* info, float ssv, fl
        */
       do
       {
-         _aaxRingBufferReverbData *reverb;
+         if (_EFFECT_GET_STATE(fp3d, REVERB_EFFECT))
+         {
+            _aaxRingBufferReverbData *reverb;
 
-         reverb = _EFFECT_GET_DATA(fp3d, REVERB_EFFECT);
-         if (reverb) {
-            reverb->prepare(src, fp3d, reverb);
+            _EFFECT_LOCK_DATA(fp3d, REVERB_EFFECT);
+            reverb = _EFFECT_GET_DATA(fp3d, REVERB_EFFECT);
+            if (reverb) {
+               reverb->prepare(src, fp3d, reverb);
+            }
+            _EFFECT_UNLOCK_DATA(fp3d, REVERB_EFFECT);
          }
-         else
+         else if (_FILTER_GET_STATE(fp3d, VOLUME_FILTER))
          {
             _aaxRingBufferOcclusionData *occlusion;
 
+            _FILTER_LOCK_DATA(fp3d, VOLUME_FILTER);
             occlusion = _FILTER_GET_DATA(fp3d, VOLUME_FILTER);
             if (occlusion) {
                occlusion->prepare(src, fp3d, occlusion);
             }
+            _FILTER_UNLOCK_DATA(fp3d, VOLUME_FILTER);
          }
       }
       while (0);
