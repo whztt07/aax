@@ -115,9 +115,6 @@ extern _flt_function_tbl *_aaxFilters[AAX_FILTER_MAX];
 #define _FILTER_GET_SLOT(F, s, p)       F->slot[s]->param[p]
 #define _FILTER_GET_SLOT_STATE(F)       F->slot[0]->state
 #define _FILTER_GET_SLOT_UPDATED(E)     F->slot[0]->updated
-#define _FILTER_LOCK_DATA(P, f)         _aaxMutexLock(P->filter[f]->mutex)
-#define _FILTER_UNLOCK_DATA(P, f)       _aaxMutexUnLock(P->filter[f]->mutex)
-#define _FILTER_FREE_LOCK(P, f)         _aaxMutexDestroy(P->filter[f]->mutex)
 #define _FILTER_GET_SLOT_DATA(F, s)     F->slot[s]->data
 #define _FILTER_SET_SLOT(F, s, p, v)    F->slot[s]->param[p] = v
 #define _FILTER_SET_SLOT_DATA(F, s, v)  F->slot[s]->data = v
@@ -126,7 +123,6 @@ extern _flt_function_tbl *_aaxFilters[AAX_FILTER_MAX];
 #define _FILTER_GET(P, f, p)            P->filter[f]->param[p]
 #define _FILTER_GET_STATE(P, f)         P->filter[f]->state
 #define _FILTER_GET_UPDATED(P, f)       P->filter[f]->updated
-#define _FILTER_GET_DATA(P, f)          P->filter[f]->data
 #define _FILTER_FREE_DATA(P, f)		if (P->filter[f]->data && P->filter[f]->destroy) P->filter[f]->destroy(P->filter[f]->data)
 #define _FILTER_SET(P, f, p, v)         P->filter[f]->param[p] = v
 #define _FILTER_SET_STATE(P, f, v)      P->filter[f]->state = v
@@ -135,6 +131,27 @@ extern _flt_function_tbl *_aaxFilters[AAX_FILTER_MAX];
 #define _FILTER_COPY(P1, P2, f, p)      P1->filter[f]->param[p] = P2->filter[f]->param[p]
 #define _FILTER_COPY_DATA(P1, P2, f)    P1->filter[f]->data = P2->filter[f]->data
 #define _FILTER_COPY_STATE(P1, P2, f)   P1->filter[f]->state = P2->filter[f]->state
+
+#ifndef NDEBUG
+# define _FILTER_LOCK_DATA(P, f)        \
+  assert(P->filter[f]->locked==0);      \
+  _aaxMutexLock(P->filter[f]->mutex);   \
+  P->filter[f]->locked=1;
+# define _FILTER_UNLOCK_DATA(P, f)      \
+  assert(P->filter[f]->locked==1);      \
+  P->filter[f]->locked=0;               \
+  _aaxMutexUnLock(P->filter[f]->mutex)
+# define _FILTER_FREE_LOCK(P, f)        \
+  assert(P->filter[f]->locked==1);      \
+  _aaxMutexDestroy(P->filter[f]->mutex)
+# define _FILTER_GET_DATA(P, f)         \
+  ((P->filter[f]->locked==1) ? P->filter[f]->data : NULL)
+#else
+# define _FILTER_LOCK_DATA(P, e)        _aaxMutexLock(P->filter[e]->mutex)
+# define _FILTER_UNLOCK_DATA(P, e)      _aaxMutexUnLock(P->filter[e]->mutex)
+# define _FILTER_FREE_LOCK(P, e)        _aaxMutexDestroy(P->filter[e]->mutex)
+# define _FILTER_GET_DATA(P, e)          P->filter[e]->data
+#endif
 
 #define _FILTER_GET2D(G, f, p)          _FILTER_GET(G->props2d, f, p)
 #define _FILTER_LOCK2D_DATA(G, f)       _FILTER_LOCK_DATA(G->props2d, f)

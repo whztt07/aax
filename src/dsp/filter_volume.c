@@ -82,6 +82,7 @@ _aaxVolumeFilterSetState(_filter_t* filter, int state)
 {
    float  fs = 48000.0f;
 
+   filter->state = state;
    if (filter->info) {
       fs = filter->info->frequency;
    }
@@ -249,7 +250,7 @@ _occlusion_create(_aaxRingBufferOcclusionData *occlusion, _aaxFilterInfo* slot,
             _aaxLFOData* lfo = occlusion->freq_filter.lfo;
 
             lfo->data = occlusion;
-            lfo->state = AAX_TRUE;
+            lfo->state = AAX_FALSE;
             lfo->fs = fs;
             lfo->period_rate = 1.0f/fs;
          

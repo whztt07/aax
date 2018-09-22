@@ -112,11 +112,20 @@ get_effect(const aaxEffect e)
 void
 _aaxSetDefaultEffect2d(_aaxEffectInfo *effect, unsigned int type, unsigned slot)
 {
+   void *mutex = effect->mutex;
+
    assert(type < MAX_STEREO_EFFECT);
    assert(slot < _MAX_FE_SLOTS);
 
+   assert(effect->locked == 0);
+   assert(effect->data == NULL);
+
    memset(effect, 0, sizeof(_aaxEffectInfo));
-   effect->mutex = _aaxMutexCreate(NULL);
+   if (!mutex) {
+      effect->mutex = _aaxMutexCreate(NULL);
+   } else {
+      effect->mutex = mutex;
+   }
 
    switch(type)
    {

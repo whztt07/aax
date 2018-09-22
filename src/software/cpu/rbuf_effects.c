@@ -161,7 +161,7 @@ _aaxRingBufferEffectsApply2nd(_aaxRingBufferSample *rbd,
    pdst = dst; /* might change further in the code */
 
    /* occlusion */
-   state = _FILTER_GET_STATE(p2d, VOLUME_FILTER);
+   state = _FILTER_GET_UPDATED(p2d, VOLUME_FILTER);
    if (state)
    {
       _aaxRingBufferOcclusionData *occlusion;
@@ -230,7 +230,7 @@ _aaxRingBufferEffectsApply2nd(_aaxRingBufferSample *rbd,
       _aaxRingBufferFreqFilterData *freq;
 
       _FILTER_LOCK_DATA(p2d, FREQUENCY_FILTER);
-      freq =_FILTER_GET_DATA(p2d, FREQUENCY_FILTER);
+      freq = _FILTER_GET_DATA(p2d, FREQUENCY_FILTER);
       if (freq)
       {
          freq->run(rbd, pdst, psrc, 0, end, ds, track, freq, lvl, ctr);

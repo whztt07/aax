@@ -65,7 +65,6 @@ _aaxAudioFrameProcess(_aaxRingBuffer *dest_rb, _frame_t *subframe,
    _aaxDelayed3dProps *fdp3d_m = fp3d->m_dprops3d;
    _aaxDelayed3dProps *pdp3d_m = NULL;
    _aaxMixerInfo *info = fmixer->info;
-   _aaxLFOData *lfo;
    char process;
    char ssr = 1;
 
@@ -120,19 +119,32 @@ _aaxAudioFrameProcess(_aaxRingBuffer *dest_rb, _frame_t *subframe,
       }
    }
 
-   lfo = _EFFECT_GET_DATA(fp2d, DYNAMIC_PITCH_EFFECT);
-   if (lfo)
+   fp2d->final.pitch_lfo = 1.0f;
+   if (_EFFECT_GET_STATE(fp2d, DYNAMIC_PITCH_EFFECT))
    {
-      fp2d->final.pitch_lfo = lfo->get(lfo, NULL, -0.5f, 0, 0);
-      fp2d->final.pitch_lfo -= lfo->min;
-   } else {
-      fp2d->final.pitch_lfo = 1.0f;
+      _aaxLFOData *lfo;
+
+      _EFFECT_LOCK_DATA(fp2d, DYNAMIC_PITCH_EFFECT);
+      lfo = _EFFECT_GET_DATA(fp2d, DYNAMIC_PITCH_EFFECT);
+      if (lfo)
+      {
+         fp2d->final.pitch_lfo = lfo->get(lfo, NULL, -0.5f, 0, 0);
+         fp2d->final.pitch_lfo -= lfo->min;
+      }
+      _EFFECT_UNLOCK_DATA(fp2d, DYNAMIC_PITCH_EFFECT);
    }
-   lfo = _FILTER_GET_DATA(fp2d, DYNAMIC_GAIN_FILTER);
-   if (lfo && !lfo->envelope) {
-      fp2d->final.gain_lfo = lfo->get(lfo, NULL, -0.5f, 0, 0);
-   } else {
-      fp2d->final.gain_lfo = 1.0f;
+
+   fp2d->final.gain_lfo = 1.0f;
+   if (_FILTER_GET_STATE(fp2d, DYNAMIC_GAIN_FILTER))
+   {
+      _aaxLFOData *lfo;
+
+      _FILTER_LOCK_DATA(fp2d, DYNAMIC_GAIN_FILTER);
+      lfo = _FILTER_GET_DATA(fp2d, DYNAMIC_GAIN_FILTER);
+      if (lfo && !lfo->envelope) {
+         fp2d->final.gain_lfo = lfo->get(lfo, NULL, -0.5f, 0, 0);
+      }
+      _FILTER_UNLOCK_DATA(fp2d, DYNAMIC_GAIN_FILTER);
    }
 
    // Only do distance attenuation frequency filtering if the frame is

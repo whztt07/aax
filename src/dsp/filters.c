@@ -113,10 +113,13 @@ void
 _aaxSetDefaultEqualizer(_aaxFilterInfo *filter[EQUALIZER_MAX])
 {
    int i;
- 
+
    /* parametric equalizer */
    for (i=0; i<2; i++)
    {
+      memset(filter[i], 0, sizeof(_aaxFilterInfo));
+      filter[i]->mutex = _aaxMutexCreate(NULL);
+
       filter[i]->param[AAX_CUTOFF_FREQUENCY] = 22050.0f;
       filter[i]->param[AAX_LF_GAIN] = 1.0f;
       filter[i]->param[AAX_HF_GAIN] = 1.0f;
@@ -135,11 +138,20 @@ _aaxSetDefaultEqualizer(_aaxFilterInfo *filter[EQUALIZER_MAX])
 void
 _aaxSetDefaultFilter2d(_aaxFilterInfo *filter, unsigned int type, UNUSED(unsigned slot))
 {
+   void *mutex = filter->mutex;
+
    assert(type < MAX_STEREO_FILTER);
    assert(slot < _MAX_FE_SLOTS);
 
+   assert(filter->locked == 0);
+   assert(filter->data == NULL);
+
    memset(filter, 0, sizeof(_aaxFilterInfo));
-   filter->mutex = _aaxMutexCreate(NULL);
+   if (!mutex) {
+      filter->mutex = _aaxMutexCreate(NULL);
+   } else {
+      filter->mutex = mutex;
+   }
 
    switch(type)
    {
